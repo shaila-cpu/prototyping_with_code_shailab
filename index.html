@@ -3,18 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>shaila early — prototyping with code</title>
+  <title>shaila batish — prototyping with code</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Syne+Mono&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0d0d0d;
+   --bg: #c45c7a;
+
       --surface: #161616;
       --border: #2a2a2a;
       --text: #f0ece4;
-      --muted: #6b6560;
-      --accent: #e8ff47;
+     --muted: #ffffff;
+    --accent: #ffffff;
       --accent2: #ff6b35;
     }
 
@@ -25,21 +26,10 @@
       color: var(--text);
       font-family: 'Syne', sans-serif;
       min-height: 100vh;
-      cursor: none;
     }
 
-    .cursor {
-      width: 10px; height: 10px;
-      background: var(--accent);
-      border-radius: 50%;
-      position: fixed;
-      pointer-events: none;
-      z-index: 9999;
-      transform: translate(-50%, -50%);
-      transition: width 0.2s, height 0.2s;
-      mix-blend-mode: difference;
-    }
-    .cursor.big { width: 40px; height: 40px; }
+
+  
 
     body::after {
       content: '';
@@ -258,11 +248,7 @@
       color: var(--accent);
       animation: floatLetter 2s ease-in-out infinite alternate;
     }
-    .thumb-6 .letter:nth-child(2) { animation-delay: 0.15s; color: #e040fb; }
-    .thumb-6 .letter:nth-child(3) { animation-delay: 0.3s; color: var(--accent2); }
-    .thumb-6 .letter:nth-child(4) { animation-delay: 0.45s; color: #40c4ff; }
-    .thumb-6 .letter:nth-child(5) { animation-delay: 0.6s; color: var(--accent); }
-
+  
     .card-footer {
       padding: 1.2rem 1.4rem;
       display: flex;
@@ -337,34 +323,23 @@
 </head>
 <body>
 
-  <div class="cursor" id="cursor"></div>
 
   <header>
     <div class="logo-block">
       <h1>
-        <span class="dim">shaila</span><br>
-        <span class="bright">early</span>
+        <span class="bright">shaila</span><br>
+        <span class="bright">batish</span>
       </h1>
     </div>
     <div class="header-meta">
-      <span>ARTG-2262+63</span>
-      <span>Prototyping with Code</span>
-      <span>Northeastern University</span>
-      <span>Spring 2026</span>
+      <span>Prototyping with Code </span>
+      <span>Spring 2026: </span>
+      <span>Assignments Hub</span>
     </div>
   </header>
 
-  <div class="ticker" aria-hidden="true">
-    <div class="ticker-track">
-      <span>HOMEWORK ARCHIVE &nbsp;✦&nbsp; PROTOTYPING WITH CODE &nbsp;✦&nbsp; P5.JS &nbsp;✦&nbsp; HTML &nbsp;✦&nbsp; CSS &nbsp;✦&nbsp; JAVASCRIPT &nbsp;✦&nbsp; GENERATIVE ART &nbsp;✦&nbsp; ARTG-2262 &nbsp;✦&nbsp;</span>
-      <span>HOMEWORK ARCHIVE &nbsp;✦&nbsp; PROTOTYPING WITH CODE &nbsp;✦&nbsp; P5.JS &nbsp;✦&nbsp; HTML &nbsp;✦&nbsp; CSS &nbsp;✦&nbsp; JAVASCRIPT &nbsp;✦&nbsp; GENERATIVE ART &nbsp;✦&nbsp; ARTG-2262 &nbsp;✦&nbsp;</span>
-    </div>
-  </div>
 
   <main>
-    <div class="section-header">
-      <span>assignments — 01 through 06</span>
-    </div>
 
     <div class="grid">
 
@@ -431,22 +406,8 @@
     </div>
   </main>
 
-  <footer>
-    <span>© 2026 Shaila Early</span>
-    <span>ARTG-2262+63 — Prototyping with Code</span>
-    <a href="https://github.com/shaila-cpu/prototyping_with_code_shailab" target="_blank">View on GitHub ↗</a>
-  </footer>
 
-  <script>
-    const cursor = document.getElementById('cursor');
-    document.addEventListener('mousemove', e => {
-      cursor.style.left = e.clientX + 'px';
-      cursor.style.top = e.clientY + 'px';
-    });
-    document.querySelectorAll('a').forEach(a => {
-      a.addEventListener('mouseenter', () => cursor.classList.add('big'));
-      a.addEventListener('mouseleave', () => cursor.classList.remove('big'));
-    });
+
   </script>
 
 </body>
