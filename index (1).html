@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>shaila early — prototyping with code</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Syne+Mono&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0d0d;
+      --surface: #161616;
+      --border: #2a2a2a;
+      --text: #f0ece4;
+      --muted: #6b6560;
+      --accent: #e8ff47;
+      --accent2: #ff6b35;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      cursor: none;
+    }
+
+    .cursor {
+      width: 10px; height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s;
+      mix-blend-mode: difference;
+    }
+    .cursor.big { width: 40px; height: 40px; }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 50;
+      opacity: 0.4;
+    }
+
+    header {
+      padding: 3rem 4vw;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 2rem;
+      animation: fadeUp 0.7s ease both;
+    }
+
+    .logo-block h1 {
+      font-size: clamp(2.5rem, 6vw, 5.5rem);
+      font-weight: 800;
+      line-height: 0.9;
+      letter-spacing: -0.03em;
+    }
+
+    .logo-block h1 .dim { color: var(--muted); }
+    .logo-block h1 .bright { color: var(--accent); }
+
+    .header-meta {
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      line-height: 2;
+      text-align: right;
+    }
+
+    .ticker {
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+      background: var(--accent);
+      padding: 0.5rem 0;
+    }
+
+    .ticker-track {
+      display: flex;
+      white-space: nowrap;
+      animation: ticker 20s linear infinite;
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--bg);
+      letter-spacing: 0.1em;
+      gap: 3rem;
+    }
+
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    main {
+      padding: 4rem 4vw 8rem;
+      max-width: 1500px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .section-header span {
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .section-header::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--surface);
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .card:nth-child(1) { animation-delay: 0.05s; }
+    .card:nth-child(2) { animation-delay: 0.12s; }
+    .card:nth-child(3) { animation-delay: 0.19s; }
+    .card:nth-child(4) { animation-delay: 0.26s; }
+    .card:nth-child(5) { animation-delay: 0.33s; }
+    .card:nth-child(6) { animation-delay: 0.40s; }
+
+    .card::after {
+      content: '↗';
+      position: absolute;
+      top: 1rem; right: 1rem;
+      font-size: 1.1rem;
+      color: var(--accent);
+      opacity: 0;
+      transform: translate(-4px, 4px);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .card:hover::after { opacity: 1; transform: translate(0, 0); }
+    .card:hover .thumb-canvas { transform: scale(1.04); }
+    .card:hover .card-footer { background: var(--accent); color: var(--bg); }
+    .card:hover .card-num { color: var(--bg); }
+
+    .thumb-canvas {
+      width: 100%;
+      aspect-ratio: 4/3;
+      transition: transform 0.4s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Thumb 1 — spinning conic gradient orb */
+    .thumb-1 { background: #1a0a2e; }
+    .thumb-1 .shape {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: conic-gradient(#e040fb, #7c4dff, #40c4ff, #e040fb);
+      box-shadow: 0 0 60px #7c4dff88;
+      animation: spin 4s linear infinite;
+    }
+
+    /* Thumb 2 — pulsing dot grid */
+    .thumb-2 { background: #0a1628; }
+    .thumb-2 .grid-dots { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+    .thumb-2 .dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    .thumb-2 .dot:nth-child(odd) { background: var(--accent2); animation-delay: 0.3s; }
+    .thumb-2 .dot:nth-child(3n) { background: #40c4ff; animation-delay: 0.6s; }
+
+    /* Thumb 3 — animated wave lines */
+    .thumb-3 { background: #0d1f0d; }
+    .thumb-3 .wave-lines { display: flex; flex-direction: column; gap: 6px; width: 70%; }
+    .thumb-3 .wline {
+      height: 3px; border-radius: 2px; background: #4caf50;
+      animation: waveWidth 2s ease-in-out infinite alternate;
+    }
+    .thumb-3 .wline:nth-child(2) { animation-delay: 0.2s; background: #8bc34a; }
+    .thumb-3 .wline:nth-child(3) { animation-delay: 0.4s; background: var(--accent); }
+    .thumb-3 .wline:nth-child(4) { animation-delay: 0.6s; }
+    .thumb-3 .wline:nth-child(5) { animation-delay: 0.8s; background: #cddc39; }
+    .thumb-3 .wline:nth-child(6) { animation-delay: 1.0s; }
+
+    /* Thumb 4 — ripple circles */
+    .thumb-4 { background: #1c0a00; }
+    .thumb-4 .circles { position: relative; width: 100px; height: 100px; }
+    .thumb-4 .circle {
+      position: absolute; border-radius: 50%;
+      border: 2px solid var(--accent2);
+      animation: expandFade 2.5s ease-out infinite;
+    }
+    .thumb-4 .circle:nth-child(1) { width: 30px; height: 30px; top: 35px; left: 35px; }
+    .thumb-4 .circle:nth-child(2) { width: 60px; height: 60px; top: 20px; left: 20px; animation-delay: 0.5s; border-color: #ff6b3588; }
+    .thumb-4 .circle:nth-child(3) { width: 90px; height: 90px; top: 5px; left: 5px; animation-delay: 1s; border-color: #ff6b3533; }
+
+    /* Thumb 5 — dancing bars */
+    .thumb-5 { background: #00101a; }
+    .thumb-5 .bars { display: flex; align-items: flex-end; gap: 6px; height: 80px; }
+    .thumb-5 .bar {
+      width: 14px; background: #00bcd4;
+      border-radius: 2px 2px 0 0;
+      animation: barDance 1.2s ease-in-out infinite alternate;
+    }
+    .thumb-5 .bar:nth-child(1) { height: 40%; }
+    .thumb-5 .bar:nth-child(2) { height: 70%; animation-delay: 0.1s; background: var(--accent); }
+    .thumb-5 .bar:nth-child(3) { height: 55%; animation-delay: 0.2s; }
+    .thumb-5 .bar:nth-child(4) { height: 90%; animation-delay: 0.3s; background: #40c4ff; }
+    .thumb-5 .bar:nth-child(5) { height: 45%; animation-delay: 0.4s; }
+    .thumb-5 .bar:nth-child(6) { height: 65%; animation-delay: 0.5s; background: var(--accent); }
+
+    /* Thumb 6 — floating letters */
+    .thumb-6 { background: #150015; }
+    .thumb-6 .letters { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; max-width: 140px; }
+    .thumb-6 .letter {
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem;
+      color: var(--accent);
+      animation: floatLetter 2s ease-in-out infinite alternate;
+    }
+    .thumb-6 .letter:nth-child(2) { animation-delay: 0.15s; color: #e040fb; }
+    .thumb-6 .letter:nth-child(3) { animation-delay: 0.3s; color: var(--accent2); }
+    .thumb-6 .letter:nth-child(4) { animation-delay: 0.45s; color: #40c4ff; }
+    .thumb-6 .letter:nth-child(5) { animation-delay: 0.6s; color: var(--accent); }
+
+    .card-footer {
+      padding: 1.2rem 1.4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-top: 1px solid var(--border);
+      transition: background 0.2s, color 0.2s;
+      gap: 1rem;
+    }
+
+    .card-num {
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+      flex-shrink: 0;
+    }
+
+    .card-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      line-height: 1.3;
+      text-align: right;
+      transition: color 0.2s;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 4vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.6; }
+    }
+    @keyframes waveWidth {
+      from { transform: scaleX(0.6); transform-origin: left; }
+      to { transform: scaleX(1); transform-origin: left; }
+    }
+    @keyframes expandFade {
+      0% { transform: scale(0.8); opacity: 1; }
+      100% { transform: scale(1.4); opacity: 0; }
+    }
+    @keyframes barDance {
+      from { transform: scaleY(0.5); }
+      to { transform: scaleY(1); }
+    }
+    @keyframes floatLetter {
+      from { transform: translateY(0px) rotate(-3deg); }
+      to { transform: translateY(-8px) rotate(3deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+
+  <header>
+    <div class="logo-block">
+      <h1>
+        <span class="dim">shaila</span><br>
+        <span class="bright">early</span>
+      </h1>
+    </div>
+    <div class="header-meta">
+      <span>ARTG-2262+63</span>
+      <span>Prototyping with Code</span>
+      <span>Northeastern University</span>
+      <span>Spring 2026</span>
+    </div>
+  </header>
+
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span>HOMEWORK ARCHIVE &nbsp;✦&nbsp; PROTOTYPING WITH CODE &nbsp;✦&nbsp; P5.JS &nbsp;✦&nbsp; HTML &nbsp;✦&nbsp; CSS &nbsp;✦&nbsp; JAVASCRIPT &nbsp;✦&nbsp; GENERATIVE ART &nbsp;✦&nbsp; ARTG-2262 &nbsp;✦&nbsp;</span>
+      <span>HOMEWORK ARCHIVE &nbsp;✦&nbsp; PROTOTYPING WITH CODE &nbsp;✦&nbsp; P5.JS &nbsp;✦&nbsp; HTML &nbsp;✦&nbsp; CSS &nbsp;✦&nbsp; JAVASCRIPT &nbsp;✦&nbsp; GENERATIVE ART &nbsp;✦&nbsp; ARTG-2262 &nbsp;✦&nbsp;</span>
+    </div>
+  </div>
+
+  <main>
+    <div class="section-header">
+      <span>assignments — 01 through 06</span>
+    </div>
+
+    <div class="grid">
+
+      <a class="card" href="https://studio.code.org/c/2770143025" target="_blank" rel="noopener">
+        <div class="thumb-canvas thumb-1">
+          <img src="images/assignment1ss.png" alt="Assignment 1" style="width:100%;height:100%;object-fit:cover;" />
+        </div>
+        <div class="card-footer">
+          <span class="card-num">01 ↗ code.org</span>
+          <span class="card-title">Dance Party</span>
+        </div>
+      </a>
+
+      <a class="card" href="https://shaila-cpu.github.io/prototyping_with_code_shailab/assignment-2/" target="_blank" rel="noopener">
+        <div class="thumb-canvas thumb-2">
+          <img src="images/assignment2ss.png" alt="Assignment 2" style="width:100%;height:100%;object-fit:cover;" />
+        </div>
+        <div class="card-footer">
+          <span class="card-num">02</span>
+          <span class="card-title">Drawing App</span>
+        </div>
+      </a>
+
+      <a class="card" href="https://shaila-cpu.github.io/prototyping_with_code_shailab/assignment-3/" target="_blank" rel="noopener">
+        <div class="thumb-canvas thumb-3">
+          <img src="images/assignment3ss.png" alt="Assignment 3" style="width:100%;height:100%;object-fit:cover;" />
+        </div>
+        <div class="card-footer">
+          <span class="card-num">03</span>
+          <span class="card-title">Screensaver</span>
+        </div>
+      </a>
+
+      <a class="card" href="https://shaila-cpu.github.io/prototyping_with_code_shailab/assignment-4/" target="_blank" rel="noopener">
+        <div class="thumb-canvas thumb-4">
+          <img src="images/assignment4ss.png" alt="Assignment 4" style="width:100%;height:100%;object-fit:cover;" />
+        </div>
+        <div class="card-footer">
+          <span class="card-num">04</span>
+          <span class="card-title">Assignment 4</span>
+        </div>
+      </a>
+
+      <a class="card" href="https://shaila-cpu.github.io/prototyping_with_code_shailab/assignment-5/" target="_blank" rel="noopener">
+        <div class="thumb-canvas thumb-5">
+          <img src="images/assignment5ss.png" alt="Assignment 5" style="width:100%;height:100%;object-fit:cover;" />
+        </div>
+        <div class="card-footer">
+          <span class="card-num">05</span>
+          <span class="card-title">Assignment 5</span>
+        </div>
+      </a>
+
+      <a class="card" href="https://shaila-cpu.github.io/prototyping_with_code_shailab/assignment-6/" target="_blank" rel="noopener">
+        <div class="thumb-canvas thumb-6">
+          <img src="images/assignment6ss.png" alt="Assignment 6" style="width:100%;height:100%;object-fit:cover;" />
+        </div>
+        <div class="card-footer">
+          <span class="card-num">06</span>
+          <span class="card-title">Assignment 6</span>
+        </div>
+      </a>
+
+    </div>
+  </main>
+
+  <footer>
+    <span>© 2026 Shaila Early</span>
+    <span>ARTG-2262+63 — Prototyping with Code</span>
+    <a href="https://github.com/shaila-cpu/prototyping_with_code_shailab" target="_blank">View on GitHub ↗</a>
+  </footer>
+
+  <script>
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+    });
+    document.querySelectorAll('a').forEach(a => {
+      a.addEventListener('mouseenter', () => cursor.classList.add('big'));
+      a.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+    });
+  </script>
+
+</body>
+</html>
